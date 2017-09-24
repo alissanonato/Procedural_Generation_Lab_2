@@ -1,0 +1,39 @@
+Abstract
+
+| :LevelGenerator |
+-------------------
+-name: string
+
+-------------------------------------------------------
++LevelGenerator(name:string)
++getName():string
++virtual generate(filename:String&, args: void* [pointer to an object that points to anything you want; pointer to anything; gonna have to cast it if wanna use it]) : int 0
+========================================================================
+
+
+^ points to
+| :DiceGenerator |
+------------------
+
+------------------
++generate(...)
+==================
+
+
+struct
+| :DieGen Args |
+----------------
++dieSize: int
++numPointsToGen: int
+--------------------
+
+=====================
+
+
+struct
+| :MidpointDisp |
+-----------------
++roughness: float
+-----------------
+
+=================
