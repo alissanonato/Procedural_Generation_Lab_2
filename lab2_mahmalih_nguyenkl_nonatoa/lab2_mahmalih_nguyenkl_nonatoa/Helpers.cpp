@@ -59,8 +59,8 @@ void fillTerrain(sf::Image &img) {
 
 double randomize(double min, double max)
 {
-	double f = (double)rand() / (RAND_MAX + 1);
-	return f * (max - min + 1) + min;
+	double f = (double)rand() / (RAND_MAX);
+	return f * (max - min) + min;
 }
 
 int clamp(int val, int lo, int hi) {
@@ -76,3 +76,42 @@ int clamp(int val, int lo, int hi) {
 //{
 //	return std::rand() % (max - min) + min;
 //}
+
+// usage statement conventions: http://courses.cms.caltech.edu/cs11/material/general/usage.html
+void usageMsg() {
+	std::cout << "Usage: generate.exe -g g_arg [-s s_arg] -f f_arg\n\t[[-d d_arg] -r r_arg\t|\n\t -n n_arg [-C] \t|\n\t -m m_arg \t|\n\t [-a a_arg] -e e_arg -p p_arg]\n" << std::endl;
+	// std::cout << "Usage: generate.exe -g g_arg [-s s_arg] -f f_arg\n\t[[-d d_arg] -r r_arg \n\t| -n n_arg [-C] \n\t| -m m_arg \n\t| [-a a_arg] -e e_arg -p p_arg]" << std::endl;
+	
+}
+
+void helpMsg() {
+	std::cout << "\n--------------------\n\tHELP\n--------------------\n" << std::endl;
+
+	usageMsg();
+
+	std::cout << "\nGeneral Options\n---------------\n" << std::endl;
+
+	std::cout << "-g: selects a generation algorithm option between [1..4]\n" <<
+		"-s: use a fixed seed (default seed is system time)\n" <<
+		"-f: filename ending in .png or .bmp\n" << std::endl;
+
+	std::cout << "\n[-g 1] Dice Rolling Algorithm\n-----------------------------\n" << std::endl;
+
+	std::cout << "-d: number of dice sides (default number is 6)\n" <<
+		"-r: number of rolls\n" << std::endl;
+
+	std::cout << "\n[-g 2] Midpoint Displacement Algorithm\n--------------------------------------\n" << std::endl;
+
+	std::cout << "-n: roughness value between [0..1]\n" <<
+		"-C: when set, rescales generated values to fit bounds (default caps height)\n" << std::endl;
+
+	std::cout << "\n[-g 3] Noise Algorithm\n----------------------\n" << std::endl;
+
+	std::cout << "-m: mode (red or sin)\n" << std::endl;
+
+	std::cout << "\n[-g 4] Cellular Automata Algorithm\n----------------------------------\n" << std::endl;
+
+	std::cout << "-a: ruleset (1 or 2) (default ruleset is 1)\n" <<
+		"-e: number of generations to run the algorithm\n" <<
+		"-p: percentage chance to be a terrain" << std::endl;
+}

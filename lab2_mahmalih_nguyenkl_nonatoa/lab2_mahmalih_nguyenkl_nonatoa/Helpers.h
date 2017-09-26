@@ -5,3 +5,5 @@ void fillTerrain(sf::Image &img);
 // int randomize(int min, int max);
 double randomize(double min, double max);
 int clamp(int val, int lo, int hi);
+void usageMsg();
+void helpMsg();

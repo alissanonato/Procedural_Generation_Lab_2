@@ -76,6 +76,7 @@
     <LinkIncremental>true</LinkIncremental>
     <IncludePath>$(SFML_INC);$(VC_IncludePath);$(WindowsSDK_IncludePath);</IncludePath>
     <LibraryPath>$(SFML_LIB);$(VC_LibraryPath_x64);$(WindowsSDK_LibraryPath_x64);$(NETFXKitsDir)Lib\um\x64</LibraryPath>
+    <TargetName>generate</TargetName>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
@@ -145,6 +146,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="CellularAutomata.cpp" />
     <ClCompile Include="DiceRoll.cpp" />
     <ClCompile Include="Helpers.cpp" />
     <ClCompile Include="main.cpp" />
@@ -152,6 +154,7 @@
     <ClCompile Include="Noise.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="CellularAutomata.h" />
     <ClInclude Include="DiceRoll.h" />
     <ClInclude Include="getopt.h" />
     <ClInclude Include="Helpers.h" />

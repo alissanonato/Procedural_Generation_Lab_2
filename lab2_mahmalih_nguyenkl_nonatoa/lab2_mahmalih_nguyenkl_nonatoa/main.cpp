@@ -7,6 +7,7 @@
 #include "DiceRoll.h"
 #include "MPDisplacement.h"
 #include "Noise.h"
+#include "CellularAutomata.h"
 
 #include <cstdlib>
 #include <iostream>
@@ -25,7 +26,6 @@
 #endif
 // getopt code: https://github.com/skandhurkat/Getopt-for-Visual-Studio
 // getting getopt working: http://www.cplusplus.com/forum/general/141573/
-// usage statements: http://courses.cms.caltech.edu/cs11/material/general/usage.html
 
 // std::atoi(optarg) concatenates individual chars
 // optarg is just the individual char
@@ -74,6 +74,7 @@ int main(int argc, char* argv[])
 	int currGenState = eGenerator::INVALID;
 	
 	// general options
+	bool hFound = false;
 	bool gFound = false;
 	bool fFound = false;
 
@@ -87,6 +88,7 @@ int main(int argc, char* argv[])
 
 	// noise
 	bool mFound = false;
+	bool invalidMode = false;
 
 	// cell auto
 	bool aFound = false;
@@ -100,8 +102,9 @@ int main(int argc, char* argv[])
 
 	float roughness = 0;	// for mp displacement -n
 
+	int ruleSet = 1;	//for cell auto -a
 	int numGens = 0;	// for cell auto -e
-	float percChance = 0.0f;	// cell auto -p; todo: figure out float conversion
+	double percChance = 0.0;	// cell auto -p; todo: figure out float conversion
 
 	std::string mode = "";	// for noise -m
 	std::vector<std::string> validModes{"red", "sin"};	
@@ -126,8 +129,7 @@ int main(int argc, char* argv[])
 			if (optarg) tvalue = std::atoi(optarg);
 			break;*/
 		case 'h':
-			std::cout << "Help" << std::endl; //to delete
-			// usage function
+			hFound = true;
 			break;
 		case 'g':
 			gFound = true;
@@ -171,8 +173,7 @@ int main(int argc, char* argv[])
 				std::cout << "D Found; numSides: " << numSides << std::endl;
 			}
 			else {
-				// usage function
-				std::cout << "Usage: " << std::endl;
+				usageMsg();
 			}			
 			break;
 		case 'r':
@@ -181,7 +182,7 @@ int main(int argc, char* argv[])
 				numRolls = std::atoi(optarg);
 			}
 			else {
-				// usage function
+				usageMsg();
 			}
 			break;
 		case 'n':
@@ -203,13 +204,17 @@ int main(int argc, char* argv[])
 				}					
 				else 
 				{
-					std::cout << "Invalid Mode" << std::endl;
-					// usage function
+					invalidMode = true;
+					std::cout << "Error: invalid mode" << std::endl;
+					usageMsg();
 				}
 			}
 			break;
 		case 'a':
 			aFound = true;
+			if (optarg) {
+				ruleSet = std::atoi(optarg);
+			}
 			break;
 		case 'e':
 			eFound = true;
@@ -220,7 +225,7 @@ int main(int argc, char* argv[])
 		case 'p':
 			pFound = true;
 			if (optarg) {
-				percChance = strtof(optarg, NULL);
+				percChance = std::atof(optarg);
 				std::cout << percChance << std::endl;
 			}
 			break;
@@ -233,10 +238,10 @@ int main(int argc, char* argv[])
 		case eGenerator::DICE_ROLL:
 			if (rFound)
 			{
-				if (nFound || cFound || mFound || aFound || eFound || pFound)
+				if (nFound || cFound || mFound || aFound || eFound || pFound || hFound)
 				{
-					// usage function
 					std::cout << "Error: extra options" << std::endl;
+					usageMsg();
 				}
 				else
 				{
@@ -248,16 +253,16 @@ int main(int argc, char* argv[])
 			else
 			{
 				std::cout << "Error: Missing argument or -r not found" << std::endl;
-				// usage function
+				usageMsg();
 			}
 			break;
 		case eGenerator::MP_DISPLACEMENT:
 			if (nFound)
 			{
-				if (rFound || dFound || mFound || aFound || eFound || pFound)
+				if (rFound || dFound || mFound || aFound || eFound || pFound || hFound)
 				{
-					// usage function
 					std::cout << "Error: extra options" << std::endl;
+					usageMsg();
 				}
 				else
 				{
@@ -270,28 +275,30 @@ int main(int argc, char* argv[])
 			else
 			{
 				std::cout << "Error: Missing argument or -n not found" << std::endl;
-				// usage function
+				usageMsg();
 			}
 			break;
 		case eGenerator::NOISE:
 			if (mFound)
 			{
-				if (dFound || rFound || nFound || cFound || aFound || eFound || pFound)
+				if (dFound || rFound || nFound || cFound || aFound || eFound || pFound || hFound)
 				{
-					// usage function
 					std::cout << "Error: extra options" << std::endl;
+					usageMsg();
 				}
 				else
 				{
-					// set mode
-					std::cout << "M Found; Mode: " << mode << std::endl;
-					noise(img);
+					if (!invalidMode) {
+						// set mode
+						std::cout << "M Found; Mode: " << mode << std::endl;
+						noise(img, mode);
+					}					
 				}
 			}
 			else
 			{
 				std::cout << "Error: Missing argument or -m not found" << std::endl;
-				// usage function
+				usageMsg();
 			}
 			break;
 		case eGenerator::CELL_AUTO:
@@ -299,50 +306,69 @@ int main(int argc, char* argv[])
 			{
 				if (pFound)
 				{
-					if (dFound || rFound || nFound || cFound || mFound)
+					if (dFound || rFound || nFound || cFound || mFound || hFound)
 					{
-						// usage function
 						std::cout << "Error: extra options" << std::endl;
+						usageMsg();
 					}
 					else
 					{
 						// set numGens and percChance
+						sf::Image tempImg;
+						tempImg.create(600, 400, sf::Color::Blue);
 						std::cout << "E Found; Gens: " << numGens << std::endl;
-						std::cout << "P Found; Percent: " << percChance << std::endl;
+						std::cout << "P Found; Percentss: " << percChance << std::endl;
+						initialiseMap(tempImg, percChance);
+
+						//
+						// TODO: set rules to get different birthLimits and deathLimits
+						//
+						for (int i = 0; i < numGens; i++) {
+							doSimulationStep(tempImg, img, ruleSet);
+							tempImg = img;
+						}
 					}
 				}
 				else
 				{
 					std::cout << "Error: Missing argument or -p not found" << std::endl;
-					// usage function
+					usageMsg();
 				}
 			}
 			else
 			{
 				std::cout << "Error: Missing argument or -e not found" << std::endl;
-				// usage function
+				usageMsg();
 			}
 			break;
 		default:
-			std::cout << "Usage:" << std::endl;
-			// usage function
+			usageMsg();
 			break;
 		}
 
-		fillTerrain(img);
+		if (currGenState != eGenerator::CELL_AUTO) {
+			fillTerrain(img);
+		}
+		
+		if (!invalidMode) {
+			texture.loadFromImage(img);
 
-		texture.loadFromImage(img);
+			sprite.setTexture(texture, true);
 
-		sprite.setTexture(texture, true);
-
-		// Save the image to a file
-		if (!img.saveToFile(filename))
-			return -1;
+			// Save the image to a file
+			if (!img.saveToFile(filename))
+				return -1;
+		}	
 	}
 	else 
 	{
-		std::cout << "Error: Missing argument or -f not found" << std::endl;
-		// usage function
+		if (!hFound) {
+			std::cout << "Error: Missing argument or -f not found" << std::endl;
+		}
+		else if (argc == 2){
+			helpMsg();
+		}
+		
 	}
 	
 

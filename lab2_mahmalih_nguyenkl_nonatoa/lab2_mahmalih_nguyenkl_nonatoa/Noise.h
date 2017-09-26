@@ -1,4 +1,7 @@
 #pragma once
+
+#include <string>
 namespace sf { class Image; }
-void noise(sf::Image &img);
+//namespace std { class string; }
+void noise(sf::Image &img, std::string &mode);
 
