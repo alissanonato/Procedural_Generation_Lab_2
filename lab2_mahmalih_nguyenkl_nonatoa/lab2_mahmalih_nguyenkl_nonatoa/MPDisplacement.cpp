@@ -8,7 +8,10 @@
 // http://www.somethinghitme.com/2013/11/11/simple-2d-terrain-with-midpoint-displacement/
 
 void mpDisplacement(double roughness, sf::Image &img, bool isBound) {
+	//
 	// isBound is set by the -C flag from command line
+	//
+
 	double width = img.getSize().x;
 	double height = img.getSize().y;
 	double displace = height;

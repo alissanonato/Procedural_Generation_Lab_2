@@ -1,5 +1,3 @@
-// lab2_mahmalih_nguyenkl_nonatoa.cpp : Defines the entry point for the console application.
-//
 #include <SFML\Graphics.hpp>
 #include <iostream>
 #include <random>
@@ -55,18 +53,18 @@ int main(int argc, char* argv[])
 	bool eFound = false;
 	bool pFound = false;
 	
-	std::string filename = ""; // for gen options -f
+	std::string filename = "";			// for gen options -f
 
-	int numSides = 6;	// for dice rolling -d
-	int numRolls = 0;	// for dice rolling -r
+	int numSides = 6;					// for dice rolling -d
+	int numRolls = 0;					// for dice rolling -r
 
-	float roughness = 0;	// for mp displacement -n
+	float roughness = 0;				// for mp displacement -n
 
-	int ruleSet = 1;	//for cell auto -a
-	int numGens = 0;	// for cell auto -e
-	double percChance = 0.0;	// cell auto -p; todo: figure out float conversion
+	int ruleSet = 1;					//for cell auto -a
+	int numGens = 0;					// for cell auto -e
+	double percChance = 0.0;			// cell auto -p
 
-	std::string mode = "";	// for noise -m
+	std::string mode = "";				// for noise -m
 	std::vector<std::string> validModes{"red", "sin"};	
 
 	// "letter:" means arg required

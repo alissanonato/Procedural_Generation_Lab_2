@@ -10,11 +10,9 @@ void initialiseMap(sf::Image &img, double percChance) {
 
 	double percChanceToStartAsTerrain = percChance;
 
-	std::cout << randomize(0, 100) << std::endl;
 	for (int x = 0; x < width; x++) {		
 		for (int y = 0; y < height; y++) {
 			if (randomize(0, 100) < percChanceToStartAsTerrain) {
-				//map[x][y] = true;
 
 				img.setPixel(x, y, sf::Color::Green);
 			}
@@ -53,9 +51,9 @@ void doSimulationStep(sf::Image &oldMap, sf::Image &newMap, int ruleSet) {
 	// Rule Set 1: 
 	//		1. if a green pixel has more than 5 green neighbours, turn it blue
 	//		2. if a blue pixel has more than 1 green neighbour, turn it green
-	// Rule Set 1: 
+	// Rule Set 2: 
 	//		1. if a green pixel has less than 4 green neighbours, turn it blue
-	//		2. if a blue pixel has more than 4 green neighbour, turn it green
+	//		2. if a blue pixel has more than 4 green neighbours, turn it green
 
 	//Loop over each row and column of the map
 	for (int x = 0; x<oldMap.getSize().x; x++) {

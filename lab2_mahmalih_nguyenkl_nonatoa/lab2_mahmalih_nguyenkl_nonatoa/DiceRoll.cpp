@@ -1,6 +1,7 @@
 #include "Helpers.h"
 #include "DiceRoll.h"
 #include <SFML\Graphics.hpp>
+
 void diceRoll(sf::Image &img, int numRolls, int numSides)
 {
 	// the x distance between each point generated depends on the number of rolls
