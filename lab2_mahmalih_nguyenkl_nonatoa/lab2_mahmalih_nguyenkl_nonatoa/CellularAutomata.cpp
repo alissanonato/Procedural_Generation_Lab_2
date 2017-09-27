@@ -25,7 +25,7 @@ void initialiseMap(sf::Image &img, double percChance) {
 	}
 }
 
-//Returns the number of cells in a ring around (x,y) that are alive.
+//Returns the number of cells in a ring around (x,y) that are green
 int countAliveNeighbours(sf::Image &img, int x, int y) {
 	int count = 0;
 	for (int i = -1; i<2; i++) {
@@ -36,7 +36,7 @@ int countAliveNeighbours(sf::Image &img, int x, int y) {
 			if (i == 0 && j == 0) {
 				//Do nothing, we don't want to add ourselves in!
 			}
-			//In case the index we're looking at it off the edge of the map
+			//In case the index we're looking at is off the edge of the map
 			else if (neighbour_x < 0 || neighbour_y < 0 || neighbour_x >= img.getSize().x || neighbour_y >= img.getSize().y) {
 				count = count + 1;
 			}
@@ -52,7 +52,7 @@ int countAliveNeighbours(sf::Image &img, int x, int y) {
 void doSimulationStep(sf::Image &oldMap, sf::Image &newMap, int ruleSet) {
 	// Rule Set 1: 
 	//		1. if a green pixel has more than 5 green neighbours, turn it blue
-	//		2. if a blue pixel has at least green neighbour, turn it green
+	//		2. if a blue pixel has more than 1 green neighbour, turn it green
 	// Rule Set 1: 
 	//		1. if a green pixel has less than 4 green neighbours, turn it blue
 	//		2. if a blue pixel has more than 4 green neighbour, turn it green

@@ -1,53 +1,18 @@
 // lab2_mahmalih_nguyenkl_nonatoa.cpp : Defines the entry point for the console application.
 //
 #include <SFML\Graphics.hpp>
-#include "getopt.h"
 #include <iostream>
+#include <random>
+
+#include "getopt.h"
 #include "Helpers.h"
 #include "DiceRoll.h"
 #include "MPDisplacement.h"
 #include "Noise.h"
 #include "CellularAutomata.h"
 
-#include <cstdlib>
-#include <iostream>
-#include <ctype.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string>
-#include <vector>
-#include <algorithm>
-//#include <io.h>
-//#include <process.h>
-#ifdef _WIN32
-#include <io.h>
-#else
-#include <unistd.h>
-#endif
 // getopt code: https://github.com/skandhurkat/Getopt-for-Visual-Studio
 // getting getopt working: http://www.cplusplus.com/forum/general/141573/
-
-// std::atoi(optarg) concatenates individual chars
-// optarg is just the individual char
-/*while ((c = getopt(argc, argv, "dr:")) != -1)
-{
-switch (c)
-{
-case 'd':
-
-if (optarg) {
-tvalue = std::atoi(optarg);
-}
-else
-{
-tvalue = 6;
-}
-std::cout << tvalue << std::endl;
-break;
-case 'r':
-break;
-}
-}*/
 
 enum eGenerator {
 	DICE_ROLL,
@@ -60,17 +25,12 @@ enum eGenerator {
 
 int main(int argc, char* argv[])
 {
-	sf::RenderWindow window
-	(sf::VideoMode(600, 400), "Hello SFML");
-	window.setFramerateLimit(60);
-
+	std::srand(time(NULL));
 	sf::Texture texture;
 	sf::Sprite sprite;
 	sf::Image img;
 	img.create(600, 400, sf::Color::Blue);
 	
-	
-
 	int currGenState = eGenerator::INVALID;
 	
 	// general options
@@ -109,25 +69,13 @@ int main(int argc, char* argv[])
 	std::string mode = "";	// for noise -m
 	std::vector<std::string> validModes{"red", "sin"};	
 
-	const char* nvalue = "World";
-	int tvalue = 0;
-
-	int c;
-
 	// "letter:" means arg required
 	// "letter" means no arg required
-	std::srand(time(NULL));
-	std::cout << std::rand() << std::endl;
+	int c;
 	while ((c = getopt(argc, argv, "hg:s:f:d:r:n:Cm:a:e:p:")) != -1)
 	{
 		switch (c)
 		{
-		/*case 'n':
-			if (optarg) nvalue = optarg;
-			break;
-		case 't':
-			if (optarg) tvalue = std::atoi(optarg);
-			break;*/
 		case 'h':
 			hFound = true;
 			break;
@@ -148,7 +96,7 @@ int main(int argc, char* argv[])
 					currGenState = eGenerator::CELL_AUTO;
 					break;
 				default:
-					std::cout << "Please use 1-4 (inc)" << std::endl;
+					std::cout << "Please use a number between [1..4]" << std::endl;
 					break;
 				}
 			}
@@ -156,21 +104,18 @@ int main(int argc, char* argv[])
 		case 's':
 			if (optarg) {
 				std::srand(std::atoi(optarg));
-				std::cout << std::rand() << std::endl;
 			}
 			break;
 		case 'f':
 			fFound = true;
 			if (optarg) {
 				filename = optarg;
-				std::cout << "F Found; filename: " << filename << std::endl;
 			}
 			break;
 		case 'd':
 			dFound = true;
 			if (optarg) {
 				numSides = std::atoi(optarg);
-				std::cout << "D Found; numSides: " << numSides << std::endl;
 			}
 			else {
 				usageMsg();
@@ -226,7 +171,6 @@ int main(int argc, char* argv[])
 			pFound = true;
 			if (optarg) {
 				percChance = std::atof(optarg);
-				std::cout << percChance << std::endl;
 			}
 			break;
 		}
@@ -245,8 +189,6 @@ int main(int argc, char* argv[])
 				}
 				else
 				{
-					// dice roll algo
-					std::cout << "R Found; numRolls: " << numRolls << std::endl;
 					diceRoll(img, numRolls, numSides);
 				}
 			}
@@ -266,9 +208,6 @@ int main(int argc, char* argv[])
 				}
 				else
 				{
-					// set roughness value
-					std::cout << "N Found; roughness: " << roughness << std::endl;
-					//mpDisplacement(roughness, !cFound, img);
 					mpDisplacement(roughness, img, !cFound);
 				}
 			}
@@ -289,8 +228,6 @@ int main(int argc, char* argv[])
 				else
 				{
 					if (!invalidMode) {
-						// set mode
-						std::cout << "M Found; Mode: " << mode << std::endl;
 						noise(img, mode);
 					}					
 				}
@@ -313,16 +250,10 @@ int main(int argc, char* argv[])
 					}
 					else
 					{
-						// set numGens and percChance
 						sf::Image tempImg;
 						tempImg.create(600, 400, sf::Color::Blue);
-						std::cout << "E Found; Gens: " << numGens << std::endl;
-						std::cout << "P Found; Percentss: " << percChance << std::endl;
 						initialiseMap(tempImg, percChance);
 
-						//
-						// TODO: set rules to get different birthLimits and deathLimits
-						//
 						for (int i = 0; i < numGens; i++) {
 							doSimulationStep(tempImg, img, ruleSet);
 							tempImg = img;
@@ -364,43 +295,10 @@ int main(int argc, char* argv[])
 	{
 		if (!hFound) {
 			std::cout << "Error: Missing argument or -f not found" << std::endl;
+			usageMsg();
 		}
-		else if (argc == 2){
+		else if (argc == 2) {
 			helpMsg();
-		}
-		
+		}		
 	}
-	
-
-	/*for (int i = 0; i < tvalue; ++i)
-		std::cout << '[' << i + 1 << "] Hello " << nvalue << "!\n";
-	std::cout << '\n';*/
-	
-	
-
-	bool running = true;
-
-	while (running) {
-		//Events
-		sf::Event ev;
-		while (window.pollEvent(ev)) {
-			switch (ev.type) {
-
-			case sf::Event::Closed:
-				running = false;
-				break;
-			}
-		}
-
-		//Draw
-
-		window.clear(sf::Color::Cyan);
-		//Draw some stuff here?
-		window.draw(sprite);
-
-		window.display();
-
-	}
-	window.close();
-
 }

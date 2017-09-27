@@ -37,3 +37,7 @@ struct
 -----------------
 
 =================
+
+Example parameters for -g 4
+-a 1 -e 5 -p 35
+-a 2 -e 5 -p 50
